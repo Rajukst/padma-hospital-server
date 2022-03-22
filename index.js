@@ -51,6 +51,12 @@ async function run() {
       res.json(confirmAppoints);
     });
 
+    app.get("/my-appoints", async (req, res) => {
+      const cursor = AppointBooking.find({});
+      const getBooking = await cursor.toArray();
+      res.send(getBooking);
+      console.log(getBooking);
+    });
     // delete product from manage products
 
     app.delete("/delete/:id", async (req, res) => {
