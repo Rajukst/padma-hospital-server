@@ -20,6 +20,7 @@ async function run() {
     await client.connect();
     const database = client.db("PadmaDiagonsotic");
     const DoctorsList = database.collection("Doctors");
+    const UsersTestCollection = database.collection("Medical-Test");
     const userReview = database.collection("Reviews");
     const AppointBooking = database.collection("Appoints");
     // creating add doctors bio
@@ -52,7 +53,10 @@ async function run() {
     });
 
     app.get("/my-appoints", async (req, res) => {
-      const cursor = AppointBooking.find({});
+      const email = req.query.email;
+      const query = { email: email };
+      console.log(query);
+      const cursor = AppointBooking.find(query);
       const getBooking = await cursor.toArray();
       res.send(getBooking);
       console.log(getBooking);
@@ -79,6 +83,27 @@ async function run() {
       const getDoctorReview = await cursor.toArray();
       res.send(getDoctorReview);
       console.log(getDoctorReview);
+    });
+    // adding medical test
+    app.post("/add-test", async (req, res) => {
+      const add = req.body;
+      const getMedicalTest = await UsersTestCollection.insertOne(add);
+      console.log("getting a Doctor", getMedicalTest);
+      res.json(getMedicalTest);
+      console.log(getMedicalTest);
+    });
+    app.get("/all-test", async (req, res) => {
+      const cursor = UsersTestCollection.find({});
+      const getDoctor = await cursor.toArray();
+      res.send(getDoctor);
+      console.log(getDoctor);
+    });
+    app.get("/lab-test/:serviceId", async (req, res) => {
+      const docId = req.params.serviceId;
+      const query = { _id: ObjectId(docId) };
+      const getLabTest = await UsersTestCollection.findOne(query);
+      console.log("getting test", getLabTest);
+      res.send(getLabTest);
     });
   } finally {
     // client.close()
